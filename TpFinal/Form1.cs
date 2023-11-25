@@ -23,11 +23,24 @@ namespace TpFinal
 
         private void FormCatalogo_Load(object sender, EventArgs e)
         {
+            CargarGrid();
+        }
+        private void CargarGrid()
+        {
             ArticuloNegocio negocio = new ArticuloNegocio();
-            ListaArticulo= negocio.ListarArticulos();
-            dgvArticulos.DataSource= ListaArticulo;
-            dgvArticulos.Columns["UrlImagenArticulo"].Visible=false;
-            CargarImagen(ListaArticulo[0].UrlImagenArticulo);
+            try
+            {
+                ListaArticulo = negocio.ListarArticulos();
+                dgvArticulos.DataSource = ListaArticulo;
+                dgvArticulos.Columns["UrlImagenArticulo"].Visible = false;
+                CargarImagen(ListaArticulo[0].UrlImagenArticulo);
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Contacte a su dev "+ex.ToString());
+            }
+            
         }
         private void dgvArticulos_SelectionChanged(object sender, EventArgs e)
         {
@@ -50,6 +63,11 @@ namespace TpFinal
 
                 picBoxArticulo.Load("https://www.pngkey.com/png/detail/233-2332677_ega-png.png");
             }
+        }
+
+        private void btnAgregar_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
