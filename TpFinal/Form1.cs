@@ -67,6 +67,18 @@ namespace TpFinal
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
+            FormAgregar agregar = new FormAgregar();
+            agregar.ShowDialog();
+            CargarGrid();
+        }
+
+        private void btnModificar_Click(object sender, EventArgs e)
+        {
+            Articulo seleccionado;
+            seleccionado = (Articulo)dgvArticulos.CurrentRow.DataBoundItem;
+            FormAgregar modificar= new FormAgregar(seleccionado);
+            modificar.ShowDialog();
+            CargarGrid();
 
         }
     }
