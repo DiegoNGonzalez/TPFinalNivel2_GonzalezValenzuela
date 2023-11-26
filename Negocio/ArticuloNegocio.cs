@@ -56,7 +56,7 @@ namespace Negocio
         {
             try
             {
-                datos.SetearConsulta("insert into ARTICULOS (Codigo,Nombre,Descripcion, ImagenUrl,IdCategoria,IdMarca,Precio) values(@codigo,@Nombre,@Descipcion,@ImagenUrl,@IdCategoria,@IdMarca,@Precio)");
+                datos.SetearConsulta("insert into ARTICULOS (Codigo,Nombre,Descripcion, ImagenUrl,IdCategoria,IdMarca,Precio) values(@codigo,@Nombre,@Descripcion,@ImagenUrl,@IdCategoria,@IdMarca,@Precio)");
                 datos.SetearParametro("@codigo", articulo.CodigoArticulo);
                 datos.SetearParametro("@Nombre",articulo.NombreArticulo);
                 datos.SetearParametro("@Descripcion", articulo.DescripcionArticulo);
@@ -67,6 +67,28 @@ namespace Negocio
                 datos.EjecutarAccion();
 
 
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally { datos.CerrarConexion(); }
+        }
+        public void ModificarArticulo(Articulo modificado)
+        {
+            try
+            {
+                datos.SetearConsulta("update ARTICULOS set Codigo=@Codigo, Nombre=@Nombre,Descripcion=@Descripcion, IdMarca=@IdMarca, IdCategoria=@IdCategoria,ImagenUrl=@ImagenUrl,Precio=@Precio where id=@Id ");
+                datos.SetearParametro("@Codigo", modificado.CodigoArticulo);
+                datos.SetearParametro("@Nombre", modificado.NombreArticulo);
+                datos.SetearParametro("@Descripcion", modificado.DescripcionArticulo);
+                datos.SetearParametro("@ImagenUrl", modificado.UrlImagenArticulo);
+                datos.SetearParametro("@IdCategoria", modificado.CategoriaArticulo.IdCategoria);
+                datos.SetearParametro("@IdMarca", modificado.MarcaArticulo.IdMarca);
+                datos.SetearParametro("@Precio", modificado.PrecioArticulo);
+                datos.SetearParametro("@Id",modificado.IdArticulo);
+                datos.EjecutarAccion();
             }
             catch (Exception ex)
             {
