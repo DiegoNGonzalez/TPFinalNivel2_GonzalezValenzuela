@@ -16,9 +16,11 @@ namespace TpFinal
     public partial class FormCatalogo : Form
     {
         private List<Articulo> ListaArticulo;
+        private ArticuloNegocio negocio;
         public FormCatalogo()
         {
             InitializeComponent();
+            negocio = new ArticuloNegocio();
         }
 
         private void FormCatalogo_Load(object sender, EventArgs e)
@@ -27,12 +29,13 @@ namespace TpFinal
         }
         private void CargarGrid()
         {
-            ArticuloNegocio negocio = new ArticuloNegocio();
             try
             {
                 ListaArticulo = negocio.ListarArticulos();
                 dgvArticulos.DataSource = ListaArticulo;
                 dgvArticulos.Columns["UrlImagenArticulo"].Visible = false;
+                dgvArticulos.Columns["IdArticulo"].Visible = false;
+                dgvArticulos.Columns["PrecioArticulo"].DefaultCellStyle.Format = "0.00";
                 CargarImagen(ListaArticulo[0].UrlImagenArticulo);
             }
             catch (Exception ex)
@@ -79,6 +82,32 @@ namespace TpFinal
             FormAgregar modificar= new FormAgregar(seleccionado);
             modificar.ShowDialog();
             CargarGrid();
+
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+
+            Articulo seleccionado;
+            string mensaje, titulo;
+            mensaje = "Esta seguro que desea eliminar el articulo ";
+            titulo = "Eliminando Articulo";
+            try
+            {
+                seleccionado = (Articulo)dgvArticulos.CurrentRow.DataBoundItem;
+                DialogResult respuesta=MessageBox.Show(mensaje+seleccionado.NombreArticulo+" ?", titulo, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if(respuesta == DialogResult.Yes)
+                {
+                    negocio.EliminarArticulo(seleccionado.IdArticulo);
+                    MessageBox.Show("Eliminado Correctamente");
+                }
+                CargarGrid();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Contacte a su DEV. "+ ex.ToString());
+            }
 
         }
     }

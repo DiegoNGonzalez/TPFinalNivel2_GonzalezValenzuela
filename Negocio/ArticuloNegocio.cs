@@ -97,5 +97,19 @@ namespace Negocio
             }
             finally { datos.CerrarConexion(); }
         }
+        public void EliminarArticulo(int id)
+        {
+            try
+            {
+                datos.SetearConsulta("DELETE FROM ARTICULOS WHERE Id="+id);
+                datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally { datos.CerrarConexion(); }
+        }
     }
 }
