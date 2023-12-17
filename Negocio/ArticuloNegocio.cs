@@ -123,7 +123,7 @@ namespace Negocio
                 {
                     if (criterio == "Mayor a ")
                     {
-                        consulta += "Precioo >" + filtro;
+                        consulta += "Precio >" + filtro;
                     }
                     else if (criterio == "Menor a ")
                     {

@@ -41,7 +41,7 @@ namespace TpFinal
                 dgvArticulos.DataSource = ListaArticulo;
                 dgvArticulos.Columns["UrlImagenArticulo"].Visible = false;
                 dgvArticulos.Columns["IdArticulo"].Visible = false;
-                dgvArticulos.Columns["PrecioArticulo"].DefaultCellStyle.Format = "0.00";
+                dgvArticulos.Columns["PrecioArticulo"].DefaultCellStyle.Format = "$0.00";
                 CargarImagen(ListaArticulo[0].UrlImagenArticulo);
             }
             catch (Exception ex)
@@ -171,6 +171,9 @@ namespace TpFinal
         }
         private void cboxCampo_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (cboxCampo.SelectedIndex != -1)
+            {
+
             string opcion = cboxCampo.SelectedItem.ToString();
             if (opcion == "Precio")
             {
@@ -185,6 +188,7 @@ namespace TpFinal
                 cBoxCriterio.Items.Add("Comienza con ");
                 cBoxCriterio.Items.Add("Termina con ");
                 cBoxCriterio.Items.Add("Contiene ");
+            }
             }
         }
 
@@ -205,6 +209,37 @@ namespace TpFinal
                 MessageBox.Show("Contacte a su DEV. "+ex.ToString());
             }
             
+        }
+
+        private void txtBuscarRapido_TextChanged(object sender, EventArgs e)
+        {
+            List<Articulo> listaFiltrada;
+            string filtro = txtBuscarRapido.Text;
+            if(filtro.Length>2)
+            {
+                listaFiltrada = ListaArticulo.FindAll(X => X.NombreArticulo.ToUpper().Contains(filtro.ToUpper()) || X.CodigoArticulo.ToUpper().Contains(filtro.ToUpper()) || X.MarcaArticulo.DescripcionMarca.ToUpper().Contains(filtro.ToUpper()) || X.CategoriaArticulo.DescripcionCategoria.ToUpper().Contains(filtro.ToUpper()));
+                dgvArticulos.DataSource = listaFiltrada;
+            }
+            else
+            {
+                listaFiltrada = ListaArticulo;
+            }
+            dgvArticulos.DataSource = null;
+            dgvArticulos.DataSource = listaFiltrada;
+            dgvArticulos.Columns["UrlImagenArticulo"].Visible = false;
+            dgvArticulos.Columns["IdArticulo"].Visible = false;
+            dgvArticulos.Columns["PrecioArticulo"].DefaultCellStyle.Format = "$0.00";
+
+
+        }
+
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+            txtBuscarRapido.Text = "";
+            txtFiltro.Text = "";
+            cboxCampo.SelectedIndex = -1;
+            cBoxCriterio.SelectedIndex = -1;
+            CargarGrid();
         }
     }
 }
