@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Dominio;
 using AccesoDataBase;
+using System.Xml.Linq;
+
 namespace Negocio
 {
     public class ArticuloNegocio
@@ -103,6 +105,121 @@ namespace Negocio
             {
                 datos.SetearConsulta("DELETE FROM ARTICULOS WHERE Id="+id);
                 datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally { datos.CerrarConexion(); }
+        }
+        public List<Articulo> Filtrar(string campo, string criterio, string filtro)
+        {
+            List<Articulo> lista = new List<Articulo>();
+            try
+            {
+                string consulta = "select a.Id,Codigo,Nombre,a.Descripcion, C.Descripcion Categoria, M.Descripcion Marca, ImagenUrl, c.id IdCategoria,m.id IdMarca,Precio from ARTICULOS A, CATEGORIAS C, MARCAS M where IdMarca=m.id and IdCategoria=c.Id AND ";
+                if (campo == "Precio")
+                {
+                    if (criterio == "Mayor a ")
+                    {
+                        consulta += "Precioo >" + filtro;
+                    }
+                    else if (criterio == "Menor a ")
+                    {
+                        consulta += "Precio <" + filtro;
+                    }
+                    else
+                    {
+                        consulta += "Precio = " + filtro;
+                    }
+                }
+                else if (campo == "Nombre")
+                {
+                    if (criterio == "Comienza con ")
+                    {
+                        consulta += "Nombre like '" + filtro + "%'";
+                    }
+                    else if (criterio == "Termina con ")
+                    {
+                        consulta += "Nombre like '%" + filtro + "'";
+                    }
+                    else
+                    {
+                        consulta += "Nombre like '%" + filtro + "%'";
+                    }
+                }
+                else if (campo == "Codigo")
+                {
+                    if (criterio == "Comienza con ")
+                    {
+                        consulta += "Codigo like '" + filtro + "%'";
+                    }
+                    else if (criterio == "Termina con ")
+                    {
+                        consulta += "Codigo like '%" + filtro + "'";
+                    }
+                    else
+                    {
+                        consulta += "Codigo like '%" + filtro + "%'";
+                    }
+                }
+                else if (campo == "Marca")
+                {
+                    if (criterio == "Comienza con ")
+                    {
+                        consulta += "M.Descripcion like '" + filtro + "%'";
+                    }
+                    else if (criterio == "Termina con ")
+                    {
+                        consulta += "M.Descripcion like '%" + filtro + "'";
+                    }
+                    else
+                    {
+                        consulta += "M.Descripcion like '%" + filtro + "%'";
+                    }
+                }
+                else
+                {
+                    if (criterio == "Comienza con ")
+                    {
+                        consulta += "C.Descripcion like '" + filtro + "%'";
+                    }
+                    else if (criterio == "Termina con ")
+                    {
+                        consulta += "C.Descripcion like '%" + filtro + "'";
+                    }
+                    else
+                    {
+                        consulta += "C.Descripcion like '%" + filtro + "%'";
+                    }
+                }
+
+
+                datos.SetearConsulta(consulta);
+                datos.EjecutarLectura();
+                while (datos.Lector.Read())
+                {
+                    Articulo aux = new Articulo();
+                    aux.IdArticulo = (int)datos.Lector["Id"];
+                    aux.NombreArticulo = (string)datos.Lector["Nombre"];
+                    aux.DescripcionArticulo = (string)datos.Lector["Descripcion"];
+                    aux.CodigoArticulo = (string)datos.Lector["Codigo"];
+                    aux.UrlImagenArticulo = (string)datos.Lector["ImagenUrl"];
+                    aux.MarcaArticulo = new Marca();
+                    aux.MarcaArticulo.IdMarca = (int)datos.Lector["IdMarca"];
+                    aux.MarcaArticulo.DescripcionMarca = (string)datos.Lector["Marca"];
+                    aux.CategoriaArticulo = new Categoria();
+                    aux.CategoriaArticulo.IdCategoria = (int)datos.Lector["IdCategoria"];
+                    aux.CategoriaArticulo.DescripcionCategoria = (string)datos.Lector["Categoria"];
+                    aux.PrecioArticulo = (decimal)datos.Lector["Precio"];
+
+
+                    lista.Add(aux);
+
+                }
+
+                return lista;
             }
             catch (Exception ex)
             {

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Dominio;
 using Negocio;
 using AccesoDataBase;
+using Microsoft.Win32;
 
 namespace TpFinal
 {
@@ -26,6 +27,11 @@ namespace TpFinal
         private void FormCatalogo_Load(object sender, EventArgs e)
         {
             CargarGrid();
+            cboxCampo.Items.Add("Nombre");
+            cboxCampo.Items.Add("Codigo");
+            cboxCampo.Items.Add("Marca");
+            cboxCampo.Items.Add("Categoria");
+            cboxCampo.Items.Add("Precio");
         }
         private void CargarGrid()
         {
@@ -109,6 +115,96 @@ namespace TpFinal
                 MessageBox.Show("Contacte a su DEV. "+ ex.ToString());
             }
 
+        }
+
+        private void btnVerDetalle_Click(object sender, EventArgs e)
+        {
+            Articulo seleccionadoDetalle;
+            try
+            {
+                seleccionadoDetalle = (Articulo)dgvArticulos.CurrentRow.DataBoundItem;
+                FormVerDetalle detalle = new FormVerDetalle(seleccionadoDetalle);
+                detalle.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Contacte a su DEV. "+ex.ToString());
+            }
+        }
+        private bool ValidarFiltro()
+        {
+            if (cboxCampo.SelectedIndex < 0)
+            {
+                MessageBox.Show("Por favor, seleccione el campo para filtrar.");
+                return true;
+            }
+            if (cBoxCriterio.SelectedIndex < 0)
+            {
+                MessageBox.Show("Por favor seleccione el criterio para filtrar.");
+                return true;
+            }
+            if (cboxCampo.SelectedIndex == 0 && txtFiltro.Text == "")
+            {
+                MessageBox.Show("Por favor ingrese un numero para filtrar");
+                return true;
+            }
+            if (cboxCampo.SelectedIndex == 4 && txtFiltro.Text.Length > 0)
+            {
+                if (!(SoloNumeros(txtFiltro.Text)))
+                {
+                    MessageBox.Show("Solo puede ingresar numeros segun el campo y criterio elegido, reingrese el dato.");
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        private bool SoloNumeros(string cadena)
+        {
+            foreach (char c in cadena)
+            {
+                if (!(char.IsNumber(c)))
+                    return false;
+            }
+            return true;
+        }
+        private void cboxCampo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string opcion = cboxCampo.SelectedItem.ToString();
+            if (opcion == "Precio")
+            {
+                cBoxCriterio.Items.Clear();
+                cBoxCriterio.Items.Add("Mayor a ");
+                cBoxCriterio.Items.Add("Menor a ");
+                cBoxCriterio.Items.Add("Igual a ");
+            }
+            else
+            {
+                cBoxCriterio.Items.Clear();
+                cBoxCriterio.Items.Add("Comienza con ");
+                cBoxCriterio.Items.Add("Termina con ");
+                cBoxCriterio.Items.Add("Contiene ");
+            }
+        }
+
+        private void btnBuscar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ValidarFiltro())
+                    return;
+                string campo = cboxCampo.SelectedItem.ToString();
+                string criterio = cBoxCriterio.SelectedItem.ToString();
+                string filtro = txtFiltro.Text;
+                dgvArticulos.DataSource = negocio.Filtrar(campo, criterio, filtro);
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Contacte a su DEV. "+ex.ToString());
+            }
+            
         }
     }
 }
